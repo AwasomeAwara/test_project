@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                cleanWs()
+                // Use the default workspace directory
+                git branch: 'master', url: 'https://github.com/AwasomeAwara/test_project.git'
+            }
+        }
+
+        stage('Install httpd Server') {
+            steps {
+                // Ensure Jenkins user has permission to install packages
+                sh 'sudo yum install httpd -y'
+                
+                sleep 10
+            }
+        }
+
+        stage('Deploy HTML File') {
+            steps {
+                // Ensure the path to index.html is correct relative to Jenkins workspace
+                sh '''
+                cp ${WORKSPACE}/index.html /var/www/html/
+                '''
+            }
+        }
+    }
+}
